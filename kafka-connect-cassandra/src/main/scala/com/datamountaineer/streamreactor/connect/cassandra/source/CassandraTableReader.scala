@@ -48,7 +48,7 @@ class CassandraTableReader(private val session: Session,
                             private val context: SourceTaskContext,
                             var queue: LinkedBlockingQueue[SourceRecord]) extends StrictLogging {
 
-  private val config = setting.routes
+  private val config = setting.kcql
   private val cqlGenerator = new CqlGenerator(setting)
 
   private val dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS'Z'")
@@ -133,8 +133,6 @@ class CassandraTableReader(private val session: Session,
   /**
    * Bind and execute the preparedStatement and set querying to true.
    *
-   * @param previous The previous timestamp to bind.
-   * @param now      The current timestamp on the db to bind.
    * @return a ResultSet.
    */
   private def bindAndFireTimebasedQuery() = {
@@ -244,7 +242,7 @@ class CassandraTableReader(private val session: Session,
    */
   private def processRow(row: Row) = {
     // convert the cassandra row to a struct
-    val ignoreList = config.getIgnoredField.toList
+    val ignoreList = config.getIgnoredFields.map(_.getName).toList
     val structColDefs = CassandraUtils.getStructColumns(row, ignoreList)
     val struct = CassandraUtils.convert(row, schemaName, structColDefs)
 
@@ -259,7 +257,7 @@ class CassandraTableReader(private val session: Session,
     logger.debug(s"Storing offset $offset")
 
     // create source record
-    val record = if (config.isWithUnwrap) {
+    val record = if (config.isUnwrapping) {
       val structValue = structColDefs.map(d => d.getName).map(name => row.getObject(name)).mkString(",")
       new SourceRecord(sourcePartition, Map(primaryKeyCol -> offset), topic, Schema.STRING_SCHEMA, structValue)
     } else {

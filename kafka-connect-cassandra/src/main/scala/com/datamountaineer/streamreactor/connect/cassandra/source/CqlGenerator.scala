@@ -1,24 +1,15 @@
 package com.datamountaineer.streamreactor.connect.cassandra.source
 
-import com.datastax.driver.core.BoundStatement
-import com.datastax.driver.core.PreparedStatement
-import com.datastax.driver.core.Row
-
-import com.datamountaineer.connector.config.Config
-import com.datamountaineer.connector.config.FieldAlias
 import com.datamountaineer.streamreactor.connect.cassandra.config.CassandraSourceSetting
-import com.datamountaineer.streamreactor.connect.cassandra.config.TimestampType
-
+import com.landoop.connect.sql.StructSql
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import org.apache.kafka.common.config.ConfigException
-import java.text.SimpleDateFormat
 
 import scala.collection.JavaConversions._
-import scala.util.{ Failure, Success, Try }
 
 class CqlGenerator(private val setting: CassandraSourceSetting) extends StrictLogging {
 
-  private val config = setting.routes
+  private val config = setting.kcql
   private val table = config.getSource
   private val keySpace = setting.keySpace
   private val selectColumns = getSelectColumns
@@ -28,10 +19,10 @@ class CqlGenerator(private val setting: CassandraSourceSetting) extends StrictLo
   private val defaultTimestamp = "1900-01-01 00:00:00.0000000Z"
 
   /**
-   * Build the CQL for the given table.
-   *
-   * @return the CQL statement (as a String)
-   */
+    * Build the CQL for the given table.
+    *
+    * @return the CQL statement (as a String)
+    */
   def getCqlStatement: String = {
     // build the correct CQL statement based on the KCQL mode
     val selectStatement = if (setting.bulkImportMode) {
@@ -50,12 +41,12 @@ class CqlGenerator(private val setting: CassandraSourceSetting) extends StrictLo
     logger.info(s"generated CQL: $selectStatement")
     selectStatement
   }
-  
+
   /**
-   * Build the CQL for the given table when no offset is available.
-   *
-   * @return the CQL statement (as a String)
-   */
+    * Build the CQL for the given table when no offset is available.
+    *
+    * @return the CQL statement (as a String)
+    */
   def getCqlStatementNoOffset: String = {
     // build the correct CQL statement based on the KCQL mode
     val selectStatement = if (setting.bulkImportMode) {
@@ -90,12 +81,12 @@ class CqlGenerator(private val setting: CassandraSourceSetting) extends StrictLo
   }
 
   /**
-   * get the columns for the SELECT statement
-   *
-   * @return the comma separated columns
-   */
+    * get the columns for the SELECT statement
+    *
+    * @return the comma separated columns
+    */
   private def getSelectColumns(): String = {
-    val fieldList = config.getFieldAlias.map(fa => fa.getField).toList
+    val fieldList = config.getFields.map(fa => fa.getName)
     // if no columns set then select all the columns in the table
     val selectColumns = if (fieldList == null || fieldList.isEmpty) "*" else fieldList.mkString(",")
     logger.debug(s"the fields to select are $selectColumns")
@@ -144,13 +135,13 @@ class CqlGenerator(private val setting: CassandraSourceSetting) extends StrictLo
   }
 
   /**
-   * determine the incremental mode in use
-   * if the INCREMENTALMODE is used in KCQL it
-   * will take precedence over the configuration
-   * setting
-   *
-   * @return the incremental mode
-   */
+    * determine the incremental mode in use
+    * if the INCREMENTALMODE is used in KCQL it
+    * will take precedence over the configuration
+    * setting
+    *
+    * @return the incremental mode
+    */
   private def determineMode: String = {
     val incMode = if (config.getIncrementalMode != null && !config.getIncrementalMode.isEmpty) {
       config.getIncrementalMode.toUpperCase()
