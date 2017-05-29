@@ -65,6 +65,7 @@ A collection of components to build a real time ingestion pipeline.
 *   Upgrade Azure Documentdb to 1.11.0
 *   Added optional progress counter to all connectors, it can be enabled with ``connect.progress.enabled`` which will 
 periodically report log messages processed
+*   Added authentication and TLS to ReThink Connectors
 
 **0.2.5 (8 Apr 2017)**
 
