@@ -27,25 +27,10 @@ import org.apache.kafka.common.config.{AbstractConfig, ConfigDef}
   * stream-reactor
   */
 object ReThinkSourceConfig {
-  val config: ConfigDef = new ConfigDef()
-    .define(ReThinkConfigConstants.RETHINK_HOST, Type.STRING,
-      ReThinkConfigConstants.RETHINK_HOST_DEFAULT,
-      Importance.HIGH, ReThinkConfigConstants.RETHINK_HOST_DOC,
-      "Connection", 1, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.RETHINK_HOST)
-    .define(ReThinkConfigConstants.RETHINK_DB, Type.STRING,
-      ReThinkConfigConstants.RETHINK_DB_DEFAULT,
-      Importance.HIGH, ReThinkConfigConstants.RETHINK_DB_DOC,
-      "Connection", 2, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.RETHINK_DB)
-    .define(ReThinkConfigConstants.RETHINK_PORT, Type.INT,
-      ReThinkConfigConstants.RETHINK_PORT_DEFAULT,
-      Importance.MEDIUM, ReThinkConfigConstants.RETHINK_PORT_DOC,
-      "Connection", 3, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.RETHINK_PORT)
+  val config: ConfigDef = ReThinkConfig().base
     .define(ReThinkConfigConstants.SOURCE_ROUTE_QUERY, Type.STRING, Importance.HIGH,
       ReThinkConfigConstants.SOURCE_ROUTE_QUERY,
       "Connection", 4, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.SOURCE_ROUTE_QUERY)
-    .define(ReThinkConfigConstants.PROGRESS_COUNTER_ENABLED, Type.BOOLEAN, ReThinkConfigConstants.PROGRESS_COUNTER_ENABLED_DEFAULT,
-      Importance.MEDIUM, ReThinkConfigConstants.PROGRESS_COUNTER_ENABLED_DOC,
-      "Metrics", 1, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.PROGRESS_COUNTER_ENABLED_DISPLAY)
 }
 
 case class ReThinkSourceConfig(props: util.Map[String, String])

@@ -27,19 +27,9 @@ import org.apache.kafka.common.config.{AbstractConfig, ConfigDef}
   * stream-reactor
   */
 object ReThinkSinkConfig {
-  val config: ConfigDef = new ConfigDef()
-    .define(ReThinkConfigConstants.RETHINK_HOST, Type.STRING,
-      ReThinkConfigConstants.RETHINK_HOST_DEFAULT,
-      Importance.HIGH, ReThinkConfigConstants.RETHINK_HOST_DOC,
-      "Connection", 1, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.RETHINK_HOST)
-    .define(ReThinkConfigConstants.RETHINK_DB, Type.STRING,
-      ReThinkConfigConstants.RETHINK_DB_DEFAULT,
-      Importance.HIGH, ReThinkConfigConstants.RETHINK_DB_DOC,
-      "Connection", 2, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.RETHINK_DB)
-    .define(ReThinkConfigConstants.RETHINK_PORT, Type.INT,
-      ReThinkConfigConstants.RETHINK_PORT_DEFAULT,
-      Importance.MEDIUM, ReThinkConfigConstants.RETHINK_PORT_DOC,
-      "Connection", 3, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.RETHINK_PORT)
+
+  val config = ReThinkConfig().base
+
     .define(ReThinkConfigConstants.SINK_ROUTE_QUERY, Type.STRING, Importance.HIGH,
       ReThinkConfigConstants.SINK_ROUTE_QUERY_DOC,
       "Connection", 4, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.SINK_ROUTE_QUERY)
@@ -55,9 +45,6 @@ object ReThinkSinkConfig {
       ReThinkConfigConstants.NBR_OF_RETIRES_DEFAULT,
       Importance.MEDIUM, ReThinkConfigConstants.NBR_OF_RETRIES_DOC,
       "Connection", 7, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.NBR_OF_RETRIES)
-    .define(ReThinkConfigConstants.PROGRESS_COUNTER_ENABLED, Type.BOOLEAN, ReThinkConfigConstants.PROGRESS_COUNTER_ENABLED_DEFAULT,
-      Importance.MEDIUM, ReThinkConfigConstants.PROGRESS_COUNTER_ENABLED_DOC,
-      "Metrics", 1, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.PROGRESS_COUNTER_ENABLED_DISPLAY)
 
 }
 
