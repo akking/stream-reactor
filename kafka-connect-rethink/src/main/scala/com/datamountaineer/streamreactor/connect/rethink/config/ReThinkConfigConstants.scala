@@ -16,7 +16,7 @@
 
 package com.datamountaineer.streamreactor.connect.rethink.config
 
-object ReThinkSinkConfigConstants {
+object ReThinkConfigConstants {
   val RETHINK_HOST = "connect.rethink.sink.host"
   private[config] val RETHINK_HOST_DOC = "Rethink server host."
   val RETHINK_HOST_DEFAULT = "localhost"
@@ -31,8 +31,12 @@ object ReThinkSinkConfigConstants {
   val CONFLICT_REPLACE = "replace"
   val CONFLICT_UPDATE = "update"
 
-  val EXPORT_ROUTE_QUERY = "connect.rethink.sink.kcql"
-  private[config] val EXPORT_ROUTE_QUERY_DOC = "KCQL expression describing field selection and routes."
+  val SINK_ROUTE_QUERY = "connect.rethink.sink.kcql"
+  private[config] val SINK_ROUTE_QUERY_DOC = "KCQL expression describing field selection and which topic to read from."
+
+  val SOURCE_ROUTE_QUERY = "connect.rethink.source.kcql"
+  private[config] val SOURCE_ROUTE_QUERY_DOC = "KCQL expression describing which rethink table changefeed to subscribe to."
+
 
   val ERROR_POLICY = "connect.rethink.size.error.policy"
   private[config] val ERROR_POLICY_DOC: String = "Specifies the action to be taken if an error occurs while inserting the data.\n" +
@@ -49,9 +53,8 @@ object ReThinkSinkConfigConstants {
   private[config] val NBR_OF_RETRIES_DOC = "The maximum number of times to try the write again."
   private[config] val NBR_OF_RETIRES_DEFAULT = 20
 
-  val BATCH_SIZE = "connect.rethink.sink.batch.size"
-  private[config] val BATCH_SIZE_DOC = "Per topic the number of sink records to batch together and insert into ReThinkDB."
-  private[config] val BATCH_SIZE_DEFAULT = 1000
+
+  val BATCH_SIZE_DEFAULT = 1000
 
   val PROGRESS_COUNTER_ENABLED = "connect.progress.enabled"
   val PROGRESS_COUNTER_ENABLED_DOC = "Enables the output for how many records have been processed"

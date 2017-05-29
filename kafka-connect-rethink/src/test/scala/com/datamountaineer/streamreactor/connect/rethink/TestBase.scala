@@ -18,7 +18,7 @@ package com.datamountaineer.streamreactor.connect.rethink
 
 import java.util
 
-import com.datamountaineer.streamreactor.connect.rethink.config.{ReThinkSinkConfigConstants, ReThinkSourceConfigConstants}
+import com.datamountaineer.streamreactor.connect.rethink.config.ReThinkConfigConstants
 import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.record.TimestampType
 import org.apache.kafka.connect.data.{Schema, SchemaBuilder, Struct}
@@ -35,13 +35,14 @@ import scala.collection.mutable
 trait TestBase extends WordSpec with Matchers with BeforeAndAfter {
   val TABLE = "rethink_table"
   val TOPIC = "rethink_topic"
-  val ROUTE = s"INSERT INTO $TABLE SELECT * FROM $TOPIC"
+  val BATCH_SIZE = 10
+  val ROUTE = s"INSERT INTO $TABLE SELECT * FROM $TOPIC BATCH = $BATCH_SIZE"
   val DB = "test"
-  val ROUTE_SELECT_UPSERT = s"UPSERT INTO $TABLE SELECT string_id, int_field FROM $TOPIC AUTOCREATE"
-  val IMPORT_ROUTE = s"INSERT INTO $TOPIC SELECT * FROM $TABLE initialize "
-  val IMPORT_ROUTE_DELTA = s"INSERT INTO $TOPIC SELECT * FROM $TABLE"
-  val IMPORT_ROUTE_2: String = s"INSERT INTO $TOPIC SELECT * FROM $TABLE initialize;" +
-    s"INSERT INTO ${TOPIC}_2 SELECT * FROM ${TABLE}_2 initialize"
+  val ROUTE_SELECT_UPSERT = s"UPSERT INTO $TABLE SELECT string_id, int_field FROM $TOPIC AUTOCREATE BATCH = $BATCH_SIZE"
+  val IMPORT_ROUTE = s"INSERT INTO $TOPIC SELECT * FROM $TABLE BATCH = $BATCH_SIZE initialize"
+  val IMPORT_ROUTE_DELTA = s"INSERT INTO $TOPIC SELECT * FROM $TABLE BATCH = $BATCH_SIZE"
+  val IMPORT_ROUTE_2: String = s"INSERT INTO $TOPIC SELECT * FROM $TABLE BATCH = $BATCH_SIZE initialize;" +
+    s"INSERT INTO ${TOPIC}_2 SELECT * FROM ${TABLE}_2 initialize BATCH = $BATCH_SIZE initialize"
 
   protected val PARTITION: Int = 12
   protected val PARTITION2: Int = 13
@@ -52,34 +53,34 @@ trait TestBase extends WordSpec with Matchers with BeforeAndAfter {
   ASSIGNMENT.add(TOPIC_PARTITION)
 
   def getProps: util.Map[String, String] = {
-    Map(ReThinkSinkConfigConstants.EXPORT_ROUTE_QUERY -> ROUTE,
-      ReThinkSinkConfigConstants.RETHINK_HOST -> "localhost",
-      ReThinkSinkConfigConstants.RETHINK_DB -> DB).asJava
+    Map(ReThinkConfigConstants.SINK_ROUTE_QUERY -> ROUTE,
+      ReThinkConfigConstants.RETHINK_HOST -> "localhost",
+      ReThinkConfigConstants.RETHINK_DB -> DB).asJava
   }
 
   def getPropsSource: util.Map[String, String] = {
-    Map(ReThinkSourceConfigConstants.IMPORT_ROUTE_QUERY -> IMPORT_ROUTE,
-      ReThinkSourceConfigConstants.RETHINK_HOST -> "localhost",
-      ReThinkSourceConfigConstants.RETHINK_DB -> DB).asJava
+    Map(ReThinkConfigConstants.SOURCE_ROUTE_QUERY -> IMPORT_ROUTE,
+      ReThinkConfigConstants.RETHINK_HOST -> "localhost",
+      ReThinkConfigConstants.RETHINK_DB -> DB).asJava
   }
 
   def getPropsSourceDelta: util.Map[String, String] = {
-    Map(ReThinkSourceConfigConstants.IMPORT_ROUTE_QUERY -> IMPORT_ROUTE_DELTA,
-      ReThinkSourceConfigConstants.RETHINK_HOST -> "localhost",
-      ReThinkSourceConfigConstants.RETHINK_DB -> DB).asJava
+    Map(ReThinkConfigConstants.SOURCE_ROUTE_QUERY -> IMPORT_ROUTE_DELTA,
+      ReThinkConfigConstants.RETHINK_HOST -> "localhost",
+      ReThinkConfigConstants.RETHINK_DB -> DB).asJava
   }
 
   def getPropsSource2: util.Map[String, String] = {
-    Map(ReThinkSourceConfigConstants.IMPORT_ROUTE_QUERY -> IMPORT_ROUTE_2,
-      ReThinkSourceConfigConstants.RETHINK_HOST -> "localhost",
-      ReThinkSourceConfigConstants.RETHINK_DB -> DB).asJava
+    Map(ReThinkConfigConstants.SOURCE_ROUTE_QUERY -> IMPORT_ROUTE_2,
+      ReThinkConfigConstants.RETHINK_HOST -> "localhost",
+      ReThinkConfigConstants.RETHINK_DB -> DB).asJava
   }
 
   def getPropsUpsertSelectRetry: util.Map[String, String] = {
-    Map(ReThinkSinkConfigConstants.EXPORT_ROUTE_QUERY -> ROUTE_SELECT_UPSERT,
-      ReThinkSinkConfigConstants.RETHINK_HOST -> "localhost",
-      ReThinkSinkConfigConstants.RETHINK_DB -> DB,
-      ReThinkSinkConfigConstants.ERROR_POLICY -> "RETRY").asJava
+    Map(ReThinkConfigConstants.SINK_ROUTE_QUERY -> ROUTE_SELECT_UPSERT,
+      ReThinkConfigConstants.RETHINK_HOST -> "localhost",
+      ReThinkConfigConstants.RETHINK_DB -> DB,
+      ReThinkConfigConstants.ERROR_POLICY -> "RETRY").asJava
   }
 
 

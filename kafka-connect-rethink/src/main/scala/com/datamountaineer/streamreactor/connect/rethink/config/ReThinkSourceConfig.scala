@@ -28,27 +28,30 @@ import org.apache.kafka.common.config.{AbstractConfig, ConfigDef}
   */
 object ReThinkSourceConfig {
   val config: ConfigDef = new ConfigDef()
-    .define(ReThinkSourceConfigConstants.RETHINK_HOST, Type.STRING,
-      ReThinkSourceConfigConstants.RETHINK_HOST_DEFAULT,
-      Importance.HIGH, ReThinkSourceConfigConstants.RETHINK_HOST_DOC,
-      "Connection", 1, ConfigDef.Width.MEDIUM, ReThinkSourceConfigConstants.RETHINK_HOST)
-    .define(ReThinkSourceConfigConstants.RETHINK_DB, Type.STRING,
-      ReThinkSourceConfigConstants.RETHINK_DB_DEFAULT,
-      Importance.HIGH, ReThinkSourceConfigConstants.RETHINK_DB_DOC,
-      "Connection", 2, ConfigDef.Width.MEDIUM, ReThinkSourceConfigConstants.RETHINK_DB)
-    .define(ReThinkSourceConfigConstants.RETHINK_PORT, Type.INT,
-      ReThinkSourceConfigConstants.RETHINK_PORT_DEFAULT,
-      Importance.MEDIUM, ReThinkSourceConfigConstants.RETHINK_PORT_DOC,
-      "Connection", 3, ConfigDef.Width.MEDIUM, ReThinkSourceConfigConstants.RETHINK_PORT)
-    .define(ReThinkSourceConfigConstants.IMPORT_ROUTE_QUERY, Type.STRING, Importance.HIGH,
-      ReThinkSourceConfigConstants.IMPORT_ROUTE_QUERY,
-      "Connection", 4, ConfigDef.Width.MEDIUM, ReThinkSourceConfigConstants.IMPORT_ROUTE_QUERY)
+    .define(ReThinkConfigConstants.RETHINK_HOST, Type.STRING,
+      ReThinkConfigConstants.RETHINK_HOST_DEFAULT,
+      Importance.HIGH, ReThinkConfigConstants.RETHINK_HOST_DOC,
+      "Connection", 1, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.RETHINK_HOST)
+    .define(ReThinkConfigConstants.RETHINK_DB, Type.STRING,
+      ReThinkConfigConstants.RETHINK_DB_DEFAULT,
+      Importance.HIGH, ReThinkConfigConstants.RETHINK_DB_DOC,
+      "Connection", 2, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.RETHINK_DB)
+    .define(ReThinkConfigConstants.RETHINK_PORT, Type.INT,
+      ReThinkConfigConstants.RETHINK_PORT_DEFAULT,
+      Importance.MEDIUM, ReThinkConfigConstants.RETHINK_PORT_DOC,
+      "Connection", 3, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.RETHINK_PORT)
+    .define(ReThinkConfigConstants.SOURCE_ROUTE_QUERY, Type.STRING, Importance.HIGH,
+      ReThinkConfigConstants.SOURCE_ROUTE_QUERY,
+      "Connection", 4, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.SOURCE_ROUTE_QUERY)
+    .define(ReThinkConfigConstants.PROGRESS_COUNTER_ENABLED, Type.BOOLEAN, ReThinkConfigConstants.PROGRESS_COUNTER_ENABLED_DEFAULT,
+      Importance.MEDIUM, ReThinkConfigConstants.PROGRESS_COUNTER_ENABLED_DOC,
+      "Metrics", 1, ConfigDef.Width.MEDIUM, ReThinkConfigConstants.PROGRESS_COUNTER_ENABLED_DISPLAY)
 }
 
 case class ReThinkSourceConfig(props: util.Map[String, String])
   extends AbstractConfig(ReThinkSourceConfig.config, props)
     with KcqlSettings
     with DatabaseSettings {
-  override val kcqlConstant: String = ReThinkSourceConfigConstants.IMPORT_ROUTE_QUERY
-  override val databaseConstant: String = ReThinkSourceConfigConstants.RETHINK_DB
+  override val kcqlConstant: String = ReThinkConfigConstants.SOURCE_ROUTE_QUERY
+  override val databaseConstant: String = ReThinkConfigConstants.RETHINK_DB
 }

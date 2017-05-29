@@ -33,4 +33,12 @@ trait KcqlSettings extends BaseSettings {
   def getFormat(formatType: FormatType => FormatType, routes: Set[Config] = getRoutes): Map[String, FormatType] = {
     routes.map(r => (r.getSource, formatType(r.getFormatType))).toMap
   }
+
+  def getBatchSize(routes: Set[Config] = getRoutes, defaultBatchSize: Int) : Map[String, Int] = {
+    routes.map(r => (r.getSource, Option(r.getBatchSize).getOrElse(defaultBatchSize))).toMap
+  }
+
+  def getBucketSize(routes: Set[Config] = getRoutes) : Map[String, Int] = {
+    routes.map(r => (r.getSource, r.getBucketing.getBucketsNumber)).toMap
+  }
 }

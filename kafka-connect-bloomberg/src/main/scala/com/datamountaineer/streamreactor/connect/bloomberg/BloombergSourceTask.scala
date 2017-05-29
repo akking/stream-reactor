@@ -19,7 +19,8 @@ package com.datamountaineer.streamreactor.connect.bloomberg
 import java.util
 
 import com.bloomberglp.blpapi._
-import com.datamountaineer.streamreactor.connect.bloomberg.config.ConnectorConfig
+import com.datamountaineer.streamreactor.connect.bloomberg.config.{BloombergSourceConfigConstants, ConnectorConfig}
+import com.datamountaineer.streamreactor.connect.utils.ProgressCounter
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.source.{SourceRecord, SourceTask}
@@ -38,6 +39,9 @@ class BloombergSourceTask extends SourceTask with StrictLogging {
   var session: Option[Session] = None
 
   var subscriptionManager: Option[BloombergSubscriptionManager] = None
+
+  private var progressCounter = new ProgressCounter
+  private var enableProgress: Boolean = false
 
   /**
     * Un-subscribes the tickers and stops the Bloomberg session
@@ -72,8 +76,11 @@ class BloombergSourceTask extends SourceTask with StrictLogging {
   override def start(map: util.Map[String, String]): Unit = {
     logger.info(scala.io.Source.fromInputStream(getClass.getResourceAsStream("/bloomberg-ascii.txt")).mkString)
 
+
     try {
-      settings = Some(BloombergSettings(new ConnectorConfig(map)))
+      val config = new ConnectorConfig(map)
+      enableProgress = config.getBoolean(BloombergSourceConfigConstants.PROGRESS_COUNTER_ENABLED)
+      settings = Some(BloombergSettings(config))
       subscriptions = Some(SubscriptionsBuilderFn(settings.get))
 
       val correlationToTicketMap = subscriptions.get.asScala.map { s => s.correlationID().value() -> s.subscriptionString() }.toMap
@@ -95,13 +102,18 @@ class BloombergSourceTask extends SourceTask with StrictLogging {
     * @return A list of records as a result of Bloomberg updates since the previous call.
     */
   override def poll(): util.List[SourceRecord] = {
-    subscriptionManager.get.getData.map { d =>
+    val records = subscriptionManager.get.getData.map { d =>
       val list = new util.ArrayList[SourceRecord](d.size())
       d.asScala.foreach { d =>
         list.add(d.toSourceRecord(settings.get))
       }
       list
     }.orNull
+
+    if (enableProgress) {
+      progressCounter.update(records.asScala.toVector)
+    }
+    records
   }
 }
 

@@ -35,8 +35,7 @@ case class ReThinkSinkSetting(database: String,
                               conflictPolicy: Map[String, String],
                               errorPolicy: ErrorPolicy = new ThrowErrorPolicy,
                               maxRetries: Int,
-                              retryInterval: Long,
-                              batchSize: Int)
+                              retryInterval: Long)
 
 object ReThinkSinkSettings {
   def apply(config: ReThinkSinkConfig): ReThinkSinkSetting = {
@@ -46,17 +45,16 @@ object ReThinkSinkSettings {
     routes
       .filter(r => r.getPrimaryKeys.size > 1)
       .foreach(_ => new ConnectException(
-        s"""More than one primary key found in ${ReThinkSinkConfigConstants.EXPORT_ROUTE_QUERY}.
+        s"""More than one primary key found in ${ReThinkConfigConstants.SINK_ROUTE_QUERY}.
            |Only one field can be set.""".stripMargin.replaceAll("\n", "")))
     val errorPolicy = config.getErrorPolicy
     val maxRetries = config.getNumberRetries
-    val batchSize = config.getBatchSize
 
     //check conflict policy
     val conflictMap = routes.map(m => {
       (m.getTarget, m.getWriteMode match {
-        case WriteModeEnum.INSERT => ReThinkSinkConfigConstants.CONFLICT_ERROR
-        case WriteModeEnum.UPSERT => ReThinkSinkConfigConstants.CONFLICT_REPLACE
+        case WriteModeEnum.INSERT => ReThinkConfigConstants.CONFLICT_ERROR
+        case WriteModeEnum.UPSERT => ReThinkConfigConstants.CONFLICT_REPLACE
       })
     }).toMap
 
@@ -79,7 +77,6 @@ object ReThinkSinkSettings {
       conflictMap,
       errorPolicy,
       maxRetries,
-      retryInterval,
-      batchSize)
+      retryInterval)
   }
 }

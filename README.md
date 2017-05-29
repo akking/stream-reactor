@@ -63,7 +63,8 @@ A collection of components to build a real time ingestion pipeline.
 *   Moved to Elastic4s 2.4
 *   Support for dates in Elastic Indexes and custom document types
 *   Upgrade Azure Documentdb to 1.11.0
-
+*   Added optional progress counter to all connectors, it can be enabled with ``connect.progress.enabled`` which will 
+periodically report log messages processed
 
 **0.2.5 (8 Apr 2017)**
 

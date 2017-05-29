@@ -46,6 +46,9 @@ object KuduSinkConfig {
       "Connection", 7, ConfigDef.Width.MEDIUM, KuduSinkConfigConstants.SCHEMA_REGISTRY_URL)
     .define(KuduSinkConfigConstants.BUCKET_SIZE, Type.INT, KuduSinkConfigConstants.BUCKET_SIZE_DEFAULT, Importance.MEDIUM, KuduSinkConfigConstants.BUCKET_SIZE_DOC,
       "Connection", 8, ConfigDef.Width.MEDIUM, KuduSinkConfigConstants.BUCKET_SIZE)
+    .define(KuduSinkConfigConstants.PROGRESS_COUNTER_ENABLED, Type.BOOLEAN, KuduSinkConfigConstants.PROGRESS_COUNTER_ENABLED_DEFAULT,
+        Importance.MEDIUM, KuduSinkConfigConstants.PROGRESS_COUNTER_ENABLED_DOC,
+        "Metrics", 1, ConfigDef.Width.MEDIUM, KuduSinkConfigConstants.PROGRESS_COUNTER_ENABLED_DISPLAY)
 }
 
 class KuduSinkConfig(props: util.Map[String, String])
