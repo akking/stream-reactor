@@ -110,7 +110,7 @@ class BloombergSourceTask extends SourceTask with StrictLogging {
       list
     }.orNull
 
-    if (enableProgress) {
+    if (enableProgress && records.size > 0) {
       progressCounter.update(records.asScala.toVector)
     }
     records
