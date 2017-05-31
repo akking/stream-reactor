@@ -63,7 +63,7 @@ class JMSSourceTask extends SourceTask with StrictLogging {
       messages.foreach(m => m.acknowledge())
     }
 
-    if (enableProgress && records.size > 0) {
+    if (enableProgress) {
       progressCounter.update(records.toVector)
     }
     records
